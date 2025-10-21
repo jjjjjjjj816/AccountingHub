@@ -33,23 +33,24 @@ jobs:
 
       - name: Install WiX Toolset
         run: |
-          choco install wixtoolset --version=4.0.4 -y
-          echo "WiX installed successfully"
+          choco install wixtoolset --version=3.11.2 -y
+          echo "PATH after WiX install:"
+          echo "$env:PATH"
+          echo "WiX installation complete"
 
-      - name: Generate Files.wxs from publish folder
+      - name: Add WiX to PATH
         run: |
-          wix convert Installer/publish -o Installer/Files.wxs
+          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
+          echo "WiX path added to environment"
+          heat dir Installer/publish -cg ProductComponents -dr INSTALLFOLDER -var var.SourceDir -out Installer/Files.wxs
 
       - name: Build MSI
         run: |
-          wix build Installer/Product.wxs Installer/Files.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi --ext WixToolset.UI.wixext --bind-path Installer/publish
+          candle.exe Installer\Product.wxs Installer\Files.wxs -dVersion=${{ env.VERSION }} -ext WixUtilExtension
+          light.exe Installer\Product.wixobj Installer\Files.wixobj -ext WixUIExtension -o AccountingHub-${{ env.VERSION }}.msi
 
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
         with:
           name: AccountingHub-MSI
           path: AccountingHub-${{ env.VERSION }}.msi
-
-      - name: Post Setup .NET
-        if: always()
-        run: dotnet --info
