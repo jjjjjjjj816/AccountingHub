@@ -34,7 +34,10 @@ jobs:
 
     - name: Build MSI Installer
       working-directory: Installer
-      run: wix build Product.wxs -o AccountingHub.msi
+      run: |
+        $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin;C:\Program Files (x86)\WiX Toolset v4.0\bin;C:\Program Files (x86)\WiX Toolset v4.1\bin"
+        wix.exe build Product.wxs -o AccountingHub.msi
+
 
     - name: Upload installer
       uses: actions/upload-artifact@v4
