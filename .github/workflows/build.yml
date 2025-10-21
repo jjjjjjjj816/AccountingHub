@@ -29,8 +29,11 @@ jobs:
       run: |
         dotnet publish AccountingHub.Desktop -c Release -o Installer/publish
 
-    - name: Install WiX Toolset
-      run: choco install wixtoolset --yes
+    - name: Install WiX v4 CLI
+      run: dotnet tool install --global wix --version 4.0.4
+
+    - name: Add WiX to PATH
+      run: echo "$env:USERPROFILE\.dotnet\tools" >> $env:GITHUB_PATH
 
     - name: Set build version
       id: version
@@ -38,20 +41,7 @@ jobs:
 
     - name: Build MSI Installer
       working-directory: Installer
-      run: |
-        $possiblePaths = @(
-          "C:\Program Files\WiX Toolset v4\bin\wix.exe",
-          "C:\Program Files (x86)\WiX Toolset v4.0\bin\wix.exe",
-          "C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe"
-        )
-        $wixPath = $possiblePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-        if ($null -eq $wixPath) {
-          Write-Error "WiX not found in any expected path."
-          exit 1
-        } else {
-          Write-Host "Using WiX from: $wixPath"
-          & $wixPath build Product.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi
-        }
+      run: wix build Product.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi
 
     - name: Upload installer
       uses: actions/upload-artifact@v4
