@@ -39,15 +39,18 @@ jobs:
     - name: Build MSI Installer
       working-directory: Installer
       run: |
-        $wixPath = "C:\Program Files (x86)\WiX Toolset v4.0\bin\wix.exe"
-        if (!(Test-Path $wixPath)) {
-          $wixPath = "C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe"
-        }
-        if (Test-Path $wixPath) {
-          & $wixPath build Product.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi
-        } else {
-          Write-Error "WiX not found at expected locations."
+        $possiblePaths = @(
+          "C:\Program Files\WiX Toolset v4\bin\wix.exe",
+          "C:\Program Files (x86)\WiX Toolset v4.0\bin\wix.exe",
+          "C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe"
+        )
+        $wixPath = $possiblePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if ($null -eq $wixPath) {
+          Write-Error "WiX not found in any expected path."
           exit 1
+        } else {
+          Write-Host "Using WiX from: $wixPath"
+          & $wixPath build Product.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi
         }
 
     - name: Upload installer
