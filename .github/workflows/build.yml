@@ -24,8 +24,9 @@ jobs:
           dotnet restore
           dotnet publish AccountingHub.Desktop -c Release -r win-x64 --self-contained false
 
-      - name: Install WiX Toolset
-        run: choco install wixtoolset --version=3.14.1.8722 -y
+      - name: Ensure WiX Toolset Installed
+        run: |
+          choco install wixtoolset -y --force --allow-downgrade || echo "WiX already installed"
 
       - name: Add WiX to PATH
         run: |
@@ -37,3 +38,9 @@ jobs:
           cd Installer
           candle Product.wxs Files.wxs -dProjectDir="D:\a\AccountingHub\AccountingHub"
           light Product.wixobj Files.wixobj -out AccountingHub.msi
+
+      - name: Upload MSI Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AccountingHub-Installer
+          path: Installer/AccountingHub.msi
