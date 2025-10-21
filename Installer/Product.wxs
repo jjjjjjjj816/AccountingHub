@@ -1,3 +1,4 @@
+<!-- Installer/Product.wxs -->
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Name="AccountingHub"
@@ -7,7 +8,7 @@
     <StandardDirectory Id="ProgramFilesFolder">
       <Directory Id="INSTALLFOLDER" Name="AccountingHub">
         <Component Id="MainExecutable" Guid="fa785c88-4b0f-4c17-9605-cc2d4d16d8f8">
-          <File Source="..\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Desktop.exe" />
+          <File Source="..\publish\AccountingHub.Desktop.exe" />
         </Component>
       </Directory>
     </StandardDirectory>
