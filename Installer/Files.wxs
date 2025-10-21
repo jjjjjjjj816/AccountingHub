@@ -9,12 +9,12 @@
 
     <ComponentGroup Id="FilesGroup" Directory="INSTALLFOLDER">
       <Component Id="AccountingHubExe" Guid="*">
-        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Desktop.exe" />
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Desktop.exe" />
       </Component>
       <Component Id="AccountingHubDlls" Guid="*">
-        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Domain.dll" />
-        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Infrastructure.dll" />
-        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Payroll.dll" />
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Domain.dll" />
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Infrastructure.dll" />
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Payroll.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>
