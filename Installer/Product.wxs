@@ -6,13 +6,19 @@
            UpgradeCode="5cbb2e4f-cc1e-4e47-97c8-d5d4b45d01ad">
     <StandardDirectory Id="ProgramFilesFolder">
       <Directory Id="INSTALLFOLDER" Name="AccountingHub">
-        <Component Id="MainExecutable" Guid="fa785c88-4b0f-4c17-9605-cc2d4d16d8f8">
-          <File Source="..\publish\AccountingHub.Desktop.exe" />
-        </Component>
+        <ComponentGroup Id="AppFiles">
+          <Component Id="MainExecutable" Guid="fa785c88-4b0f-4c17-9605-cc2d4d16d8f8">
+            <File Source="..\publish\AccountingHub.Desktop.exe" />
+          </Component>
+          <Component Id="AllFiles" Guid="c8d9b444-4a7b-4f9c-9f75-51a3dfc3a6ee">
+            <File Source="..\publish\**\*" />
+          </Component>
+        </ComponentGroup>
       </Directory>
     </StandardDirectory>
+
     <Feature Id="DefaultFeature" Title="AccountingHub" Level="1">
-      <ComponentRef Id="MainExecutable" />
+      <ComponentGroupRef Id="AppFiles" />
     </Feature>
   </Package>
 </Wix>
