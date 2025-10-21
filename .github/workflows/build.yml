@@ -31,23 +31,22 @@ jobs:
         run: |
           dotnet publish AccountingHub.Desktop/AccountingHub.Desktop.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o Installer/publish
 
-      - name: Install WiX Toolset
+      - name: Install WiX Toolset (skip if already installed)
         run: |
-          choco install wixtoolset --version=3.11.2 -y
-          echo "PATH after WiX install:"
-          echo "$env:PATH"
-          echo "WiX installation complete"
+          choco install wixtoolset -y --force || echo "WiX already installed"
+          echo "WiX version:"
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" -? | Out-Host
 
-      - name: Add WiX to PATH
+      - name: Add WiX to PATH and generate Files.wxs
         run: |
-          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
-          echo "WiX path added to environment"
-          heat dir Installer/publish -cg ProductComponents -dr INSTALLFOLDER -var var.SourceDir -out Installer/Files.wxs
+          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          echo "WiX path added"
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir Installer/publish -cg ProductComponents -dr INSTALLFOLDER -var var.SourceDir -out Installer/Files.wxs
 
       - name: Build MSI
         run: |
-          candle.exe Installer\Product.wxs Installer\Files.wxs -dVersion=${{ env.VERSION }} -ext WixUtilExtension
-          light.exe Installer\Product.wixobj Installer\Files.wixobj -ext WixUIExtension -o AccountingHub-${{ env.VERSION }}.msi
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" Installer\Product.wxs Installer\Files.wxs -dVersion=${{ env.VERSION }} -ext WixUtilExtension
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" Installer\Product.wixobj Installer\Files.wixobj -ext WixUIExtension -o AccountingHub-${{ env.VERSION }}.msi
 
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
