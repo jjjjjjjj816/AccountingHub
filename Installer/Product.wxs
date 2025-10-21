@@ -10,38 +10,41 @@
       Scope="perMachine">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
     <Feature Id="MainFeature" Title="AccountingHub" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="StartMenuShortcut" />
     </Feature>
   </Package>
 
+  <!-- ================== Directories ================== -->
   <Fragment>
-    <Directory Id="ProgramFilesFolder">
-      <Directory Id="INSTALLFOLDER" Name="AccountingHub">
-        <ComponentGroupRef Id="ProductComponents" />
-      </Directory>
-    </Directory>
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="AccountingHub" />
+    </StandardDirectory>
 
-    <Directory Id="ProgramMenuFolder">
+    <StandardDirectory Id="ProgramMenuFolder">
       <Directory Id="ApplicationProgramsFolder" Name="AccountingHub" />
-    </Directory>
+    </StandardDirectory>
   </Fragment>
 
+  <!-- ================== Components ================== -->
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <File Source="publish\AccountingHub.Desktop.exe" />
-      <File Source="publish\AccountingHub.Desktop.dll" />
-      <File Source="publish\AccountingHub.Domain.dll" />
-      <File Source="publish\AccountingHub.Infrastructure.dll" />
-      <File Source="publish\AccountingHub.Payroll.dll" />
-      <File Source="publish\AccountingHub.Desktop.deps.json" />
-      <File Source="publish\AccountingHub.Desktop.runtimeconfig.json" />
+      <Component Id="MainFiles" Directory="INSTALLFOLDER">
+        <File Source="publish\AccountingHub.Desktop.exe" />
+        <File Source="publish\AccountingHub.Desktop.dll" />
+        <File Source="publish\AccountingHub.Domain.dll" />
+        <File Source="publish\AccountingHub.Infrastructure.dll" />
+        <File Source="publish\AccountingHub.Payroll.dll" />
+        <File Source="publish\AccountingHub.Desktop.deps.json" />
+        <File Source="publish\AccountingHub.Desktop.runtimeconfig.json" />
+      </Component>
     </ComponentGroup>
 
     <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder">
       <Shortcut
-        Id="ApplicationStartMenuShortcut"
+        Id="AppShortcut"
         Name="AccountingHub"
         Target="[INSTALLFOLDER]AccountingHub.Desktop.exe"
         Description="AccountingHub Desktop Application"
