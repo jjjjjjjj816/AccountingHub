@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 
+  <!-- ====== PRODUCT METADATA ====== -->
   <Package Name="AccountingHub"
            Manufacturer="JJ Software"
-           Version="1.0.0"
+           Version="$(var.Version)"
            UpgradeCode="C7B0E03C-3E15-4E8A-9A77-8EAB2C6B7031"
            InstallerVersion="500"
            Language="1033"
            Compressed="yes"
            InstallScope="perMachine" />
 
+  <!-- ====== INSTALL DIRECTORIES ====== -->
   <StandardDirectory Id="ProgramFilesFolder">
     <Directory Id="INSTALLFOLDER" Name="AccountingHub">
       <ComponentGroupRef Id="ProductComponents" />
     </Directory>
   </StandardDirectory>
 
+  <StandardDirectory Id="ProgramMenuFolder">
+    <Directory Id="ApplicationProgramsFolder" Name="AccountingHub" />
+  </StandardDirectory>
+
+  <!-- ====== APP FILES ====== -->
   <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
     <File Source="publish\AccountingHub.Desktop.exe" />
     <File Source="publish\AccountingHub.Desktop.dll" />
@@ -26,8 +33,26 @@
     <File Source="publish\AccountingHub.Desktop.runtimeconfig.json" />
   </ComponentGroup>
 
+  <!-- ====== START MENU SHORTCUT ====== -->
+  <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder">
+    <Shortcut Id="ApplicationStartMenuShortcut"
+              Name="AccountingHub"
+              Description="AccountingHub Desktop Application"
+              Target="[INSTALLFOLDER]AccountingHub.Desktop.exe"
+              WorkingDirectory="INSTALLFOLDER" />
+    <RemoveFolder Id="RemoveShortcutFolder" On="uninstall" />
+    <RegistryValue Root="HKCU"
+                   Key="Software\JJSoftware\AccountingHub"
+                   Name="installed"
+                   Type="integer"
+                   Value="1"
+                   KeyPath="yes" />
+  </Component>
+
+  <!-- ====== MAIN FEATURE ====== -->
   <Feature Id="MainFeature" Title="AccountingHub" Level="1">
     <ComponentGroupRef Id="ProductComponents" />
+    <ComponentRef Id="StartMenuShortcut" />
   </Feature>
 
 </Wix>
