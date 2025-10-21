@@ -1,0 +1,21 @@
+<Window x:Class="AccountingHub.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AccountingHub" Height="520" Width="840">
+  <Grid Margin="12">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="200"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+      <TextBlock Text="Modules" FontWeight="Bold" Margin="0,0,0,8"/>
+      <Button Name="BtnDashboard" Content="Dashboard" Margin="0,0,0,6" Click="BtnDashboard_Click"/>
+      <Button Name="BtnEmployees" Content="Payroll • Employees" Margin="0,0,0,6" Click="BtnEmployees_Click"/>
+      <Button Name="BtnRunPayroll" Content="Payroll • Run" Margin="0,0,0,6" Click="BtnRunPayroll_Click"/>
+      <Button Name="BtnJournal" Content="Accounting • Journal" Margin="0,0,0,6" Click="BtnJournal_Click"/>
+    </StackPanel>
+    <Border Grid.Column="1" Padding="12" BorderBrush="#DDD" BorderThickness="1" CornerRadius="6">
+      <ContentControl Name="ContentHost"/>
+    </Border>
+  </Grid>
+</Window>
