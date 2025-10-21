@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="AccountingHub" />
+      </Directory>
+    </Directory>
+
+    <ComponentGroup Id="FilesGroup" Directory="INSTALLFOLDER">
+      <Component Id="AccountingHubExe" Guid="*">
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Desktop.exe" />
+      </Component>
+      <Component Id="AccountingHubDlls" Guid="*">
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Domain.dll" />
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Infrastructure.dll" />
+        <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Payroll.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
