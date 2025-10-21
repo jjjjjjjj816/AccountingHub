@@ -1,28 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-
-  <Package
-    Name="AccountingHub"
-    Version="$(var.Version)"
-    Manufacturer="JJ Software"
-    UpgradeCode="C7B0E03C-3E15-4E8A-9A77-8EAB2C6B7031"
-    InstallerVersion="500"
-    Compressed="yes"
-    InstallScope="perMachine">
-  </Package>
-
-  <StandardDirectory Id="ProgramFilesFolder">
-    <Directory Id="INSTALLFOLDER" Name="AccountingHub">
-      <ComponentGroupRef Id="ProductComponents" />
-    </Directory>
-  </StandardDirectory>
-
-  <MajorUpgrade
-    DowngradeErrorMessage="A newer version of [ProductName] is already installed."
-    AllowDowngrades="no" />
-
-  <Feature Id="MainFeature" Title="AccountingHub" Level="1">
-    <ComponentGroupRef Id="ProductComponents" />
-  </Feature>
-
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="AccountingHub" Language="1033" Version="1.0.0.0" Manufacturer="JJ Software" UpgradeCode="12345678-ABCD-4321-ABCD-1234567890AB">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+    <MediaTemplate />
+    <Feature Id="MainFeature" Title="AccountingHub" Level="1">
+      <ComponentGroupRef Id="FilesGroup" />
+    </Feature>
+  </Product>
 </Wix>
