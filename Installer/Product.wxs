@@ -10,15 +10,20 @@
         <Component Id="MainExecutable" Guid="fa785c88-4b0f-4c17-9605-cc2d4d16d8f8">
           <File Source="..\publish\AccountingHub.Desktop.exe" />
         </Component>
-        <Component Id="SupportingFiles" Guid="a9df92d1-4a09-4b4f-8e6e-b7e7b317c8d1">
-          <File Source="..\publish\*" />
+        <Component Id="Dependencies" Guid="e09f83b6-bb6e-42f3-b86c-b45bbfa13c0a">
+          <File Source="..\publish\AccountingHub.Desktop.dll" />
+          <File Source="..\publish\AccountingHub.Domain.dll" />
+          <File Source="..\publish\AccountingHub.Infrastructure.dll" />
+          <File Source="..\publish\AccountingHub.Payroll.dll" />
+          <File Source="..\publish\AccountingHub.Desktop.deps.json" />
+          <File Source="..\publish\AccountingHub.Desktop.runtimeconfig.json" />
         </Component>
       </Directory>
     </StandardDirectory>
 
     <Feature Id="DefaultFeature" Title="AccountingHub" Level="1">
       <ComponentRef Id="MainExecutable" />
-      <ComponentRef Id="SupportingFiles" />
+      <ComponentRef Id="Dependencies" />
     </Feature>
 
   </Package>
