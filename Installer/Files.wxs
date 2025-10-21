@@ -8,14 +8,23 @@
     </Directory>
 
     <ComponentGroup Id="FilesGroup" Directory="INSTALLFOLDER">
-      <Component Id="AccountingHubExe" Guid="*">
+
+      <Component Id="AccountingHubExe" Guid="4C6E4E6B-7A3E-4A6E-8A14-1B2D78F1C001">
         <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Desktop.exe" />
       </Component>
-      <Component Id="AccountingHubDlls" Guid="*">
+
+      <Component Id="AccountingHubDomainDll" Guid="4C6E4E6B-7A3E-4A6E-8A14-1B2D78F1C002">
         <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Domain.dll" />
+      </Component>
+
+      <Component Id="AccountingHubInfrastructureDll" Guid="4C6E4E6B-7A3E-4A6E-8A14-1B2D78F1C003">
         <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Infrastructure.dll" />
+      </Component>
+
+      <Component Id="AccountingHubPayrollDll" Guid="4C6E4E6B-7A3E-4A6E-8A14-1B2D78F1C004">
         <File Source="$(var.ProjectDir)\AccountingHub.Desktop\bin\Release\net8.0-windows\win-x64\publish\AccountingHub.Payroll.dll" />
       </Component>
+
     </ComponentGroup>
   </Fragment>
 </Wix>
