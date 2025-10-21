@@ -31,24 +31,25 @@ jobs:
         run: |
           dotnet publish AccountingHub.Desktop/AccountingHub.Desktop.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o Installer/publish
 
-      - name: Install WiX Toolset (skip if already installed)
+      - name: Ensure WiX Toolset is installed
         run: |
-          choco install wixtoolset -y --force || echo "WiX already installed"
-          echo "WiX version:"
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" -? | Out-Host
+          if (!(Test-Path "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe")) {
+            choco install wixtoolset --version=3.14.1.20250415 -y
+          } else {
+            Write-Host "WiX Toolset already installed"
+          }
 
       - name: Add WiX to PATH and generate Files.wxs
         run: |
           $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          echo "WiX path added"
           & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir Installer/publish -cg ProductComponents -dr INSTALLFOLDER -var var.SourceDir -out Installer/Files.wxs
 
       - name: Build MSI
         run: |
           $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          echo "Building MSI..."
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" Installer\Product.wxs Installer\Files.wxs -dVersion ${{ env.VERSION }} -ext WixUtilExtension
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" Installer\Product.wixobj Installer\Files.wixobj -ext WixUIExtension -o AccountingHub-${{ env.VERSION }}.msi
+          Write-Host "Building MSI..."
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" "Installer\Product.wxs" "Installer\Files.wxs" -dVersion="${{ env.VERSION }}" -ext WixUtilExtension
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" "Installer\Product.wixobj" "Installer\Files.wixobj" -ext WixUIExtension -o "AccountingHub-${{ env.VERSION }}.msi"
 
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
