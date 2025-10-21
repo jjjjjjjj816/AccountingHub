@@ -1,3 +1,4 @@
+# .github/workflows/build.yml
 name: Build AccountingHub MSI
 
 on:
@@ -19,15 +20,18 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
-    - name: Restore dependencies
+    - name: Restore
       run: dotnet restore
 
-    - name: Build solution
+    - name: Build (Release)
       run: dotnet build --configuration Release --no-restore
 
-    - name: Publish desktop app
+    - name: Publish desktop app to Installer/publish
+      run: dotnet publish AccountingHub.Desktop -c Release -r win-x64 --self-contained false -o Installer/publish
+
+    - name: List publish output (debug)
       run: |
-        dotnet publish AccountingHub.Desktop -c Release -o Installer/publish
+        Get-ChildItem -Recurse Installer/publish | Format-Table -AutoSize
 
     - name: Install WiX v4 CLI
       run: dotnet tool install --global wix --version 4.0.4
@@ -35,15 +39,47 @@ jobs:
     - name: Add WiX to PATH
       run: echo "$env:USERPROFILE\.dotnet\tools" >> $env:GITHUB_PATH
 
-    - name: Set build version
+    - name: Set version
       id: version
+      shell: bash
       run: echo "VERSION=1.0.$(date +'%y%m%d%H%M')" >> $GITHUB_ENV
 
-    - name: Build MSI Installer
+    - name: Generate Files.wxs from publish folder (1 file per component)
       working-directory: Installer
-      run: wix build Product.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi
+      shell: pwsh
+      run: |
+        $pub = Join-Path $PWD "publish"
+        if (!(Test-Path $pub)) { throw "Publish folder not found: $pub" }
 
-    - name: Upload installer
+        $sb = New-Object System.Text.StringBuilder
+        $null = $sb.AppendLine('<?xml version="1.0" encoding="UTF-8"?>')
+        $null = $sb.AppendLine('<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">')
+        $null = $sb.AppendLine('  <Fragment>')
+        $null = $sb.AppendLine('    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">')
+
+        $files = Get-ChildItem -Recurse $pub -File
+        $i = 0
+        foreach ($f in $files) {
+          $i++
+          $rel = $f.FullName.Substring($pub.Length+1) -replace '\\','/'
+          $compId = ('File' + $i)
+          $null = $sb.AppendLine("      <Component Id=""$compId"" Guid=""*"">")
+          $null = $sb.AppendLine("        <File Source=""publish/$rel"" KeyPath=""yes"" />")
+          $null = $sb.AppendLine('      </Component>')
+        }
+
+        $null = $sb.AppendLine('    </ComponentGroup>')
+        $null = $sb.AppendLine('  </Fragment>')
+        $null = $sb.AppendLine('</Wix>')
+        Set-Content -Path Files.wxs -Value $sb.ToString() -Encoding UTF8
+
+        Write-Host "Generated $(($files | Measure-Object).Count) file components."
+
+    - name: Build MSI
+      working-directory: Installer
+      run: wix build Product.wxs Files.wxs -define Version=${{ env.VERSION }} -o AccountingHub-${{ env.VERSION }}.msi
+
+    - name: Upload MSI artifact
       uses: actions/upload-artifact@v4
       with:
         name: AccountingHub-${{ env.VERSION }}
