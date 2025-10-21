@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="AccountingHub"
+           Manufacturer="JJ Software"
+           Version="1.0.0.0"
+           UpgradeCode="5cbb2e4f-cc1e-4e47-97c8-d5d4b45d01ad">
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="AccountingHub">
+        <Component Id="MainExecutable" Guid="fa785c88-4b0f-4c17-9605-cc2d4d16d8f8">
+          <File Source="..\AccountingHub.Desktop\bin\Release\net8.0-windows\AccountingHub.Desktop.exe" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+    <Feature Id="DefaultFeature" Title="AccountingHub" Level="1">
+      <ComponentRef Id="MainExecutable" />
+    </Feature>
+  </Package>
+</Wix>
