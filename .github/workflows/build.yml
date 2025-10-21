@@ -1,41 +1,43 @@
-# .github/workflows/build.yml
-name: Build AccountingHub Desktop + MSI
+name: Build AccountingHub MSI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.0.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
 
-      - name: Restore
-        run: dotnet restore AccountingHub.sln
+    - name: Restore dependencies
+      run: dotnet restore
 
-      - name: Build
-        run: dotnet build AccountingHub.sln -c Release --no-restore
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
 
-      - name: Publish desktop app
-        run: dotnet publish AccountingHub.Desktop -c Release -o publish
+    - name: Publish desktop app
+      run: |
+        dotnet publish AccountingHub.Desktop -c Release -o Installer/publish
 
-      - name: Install WiX Toolset
-        run: dotnet tool install --global wix --version 4.0.1
+    - name: Install WiX Toolset
+      run: choco install wixtoolset --yes
 
-      - name: Build MSI Installer
-        working-directory: Installer
-        run: |
-          wix build Product.wxs -o AccountingHub.msi
+    - name: Build MSI Installer
+      working-directory: Installer
+      run: wix build Product.wxs -o AccountingHub.msi
 
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: AccountingHub-MSI
-          path: Installer/AccountingHub.msi
+    - name: Upload installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: AccountingHub-MSI
+        path: Installer/AccountingHub.msi
