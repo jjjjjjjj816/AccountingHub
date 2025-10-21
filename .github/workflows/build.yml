@@ -1,58 +1,39 @@
-name: Build Windows App & MSI
+name: Build AccountingHub MSI
 
 on:
   push:
-    branches:
-      - main
-
-env:
-  VERSION: 1.0.${{ github.run_number }}
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
 
-      - name: Restore dependencies
-        run: dotnet restore AccountingHub.sln
-
-      - name: Build project
-        run: dotnet build AccountingHub.sln -c Release
-
-      - name: Publish desktop app
+      - name: Restore and Build
         run: |
-          dotnet publish AccountingHub.Desktop/AccountingHub.Desktop.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o Installer/publish
+          dotnet restore
+          dotnet publish AccountingHub.Desktop -c Release -r win-x64 --self-contained false
 
-      - name: Ensure WiX Toolset is installed
-        run: |
-          if (!(Test-Path "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe")) {
-            choco install wixtoolset --version=3.14.1.20250415 -y
-          } else {
-            Write-Host "WiX Toolset already installed"
-          }
+      - name: Install WiX Toolset
+        run: choco install wixtoolset --version=3.14.1.8722 -y
 
-      - name: Add WiX to PATH and generate Files.wxs
+      - name: Add WiX to PATH
         run: |
           $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir Installer/publish -cg ProductComponents -dr INSTALLFOLDER -var var.SourceDir -out Installer/Files.wxs
+          echo "##vso[task.prependpath]C:\Program Files (x86)\WiX Toolset v3.14\bin"
 
       - name: Build MSI
         run: |
-          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          Write-Host "Building MSI..."
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" "Installer\Product.wxs" "Installer\Files.wxs" -dVersion="${{ env.VERSION }}" -ext WixUtilExtension
-          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" "Installer\Product.wixobj" "Installer\Files.wixobj" -ext WixUIExtension -o "AccountingHub-${{ env.VERSION }}.msi"
-
-      - name: Upload MSI artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AccountingHub-MSI
-          path: AccountingHub-${{ env.VERSION }}.msi
+          cd Installer
+          candle Product.wxs Files.wxs -dProjectDir="D:\a\AccountingHub\AccountingHub"
+          light Product.wixobj Files.wixobj -out AccountingHub.msi
