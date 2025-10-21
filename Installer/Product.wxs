@@ -2,48 +2,27 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 
   <Package
-      Name="AccountingHub"
-      Version="$(var.Version)"
-      Manufacturer="JJ Software"
-      UpgradeCode="C7B0E03C-3E15-4E8A-9A77-8EAB2C6B7031"
-      InstallerVersion="500"
-      Scope="perMachine">
-
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-
-    <Feature Id="MainFeature" Title="AccountingHub" Level="1">
-      <ComponentGroupRef Id="ProductComponents" />
-      <ComponentRef Id="StartMenuShortcut" />
-    </Feature>
+    Name="AccountingHub"
+    Version="$(var.Version)"
+    Manufacturer="JJ Software"
+    UpgradeCode="C7B0E03C-3E15-4E8A-9A77-8EAB2C6B7031"
+    InstallerVersion="500"
+    Compressed="yes"
+    InstallScope="perMachine">
   </Package>
 
-  <Fragment>
-    <StandardDirectory Id="ProgramFilesFolder">
-      <Directory Id="INSTALLFOLDER" Name="AccountingHub" />
-    </StandardDirectory>
+  <StandardDirectory Id="ProgramFilesFolder">
+    <Directory Id="INSTALLFOLDER" Name="AccountingHub">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Directory>
+  </StandardDirectory>
 
-    <StandardDirectory Id="ProgramMenuFolder">
-      <Directory Id="ApplicationProgramsFolder" Name="AccountingHub" />
-    </StandardDirectory>
-  </Fragment>
+  <MajorUpgrade
+    DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+    AllowDowngrades="no" />
 
-  <Fragment>
-    <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Guid="D2B9E21B-9C0F-4E4A-8E0A-6A2F2B1C1A01">
-      <Shortcut
-        Id="AppShortcut"
-        Name="AccountingHub"
-        Target="[INSTALLFOLDER]AccountingHub.Desktop.exe"
-        Description="AccountingHub Desktop Application"
-        WorkingDirectory="INSTALLFOLDER" />
-      <RemoveFolder Id="RemoveShortcutFolder" On="uninstall" />
-      <RegistryValue
-        Root="HKCU"
-        Key="Software\JJSoftware\AccountingHub"
-        Name="installed"
-        Type="integer"
-        Value="1"
-        KeyPath="yes" />
-    </Component>
-  </Fragment>
+  <Feature Id="MainFeature" Title="AccountingHub" Level="1">
+    <ComponentGroupRef Id="ProductComponents" />
+  </Feature>
 
 </Wix>
